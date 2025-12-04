@@ -1,0 +1,646 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>VantaShield Welcomer – Dashboard & Security Bot</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    :root {
+      --bg: radial-gradient(circle at top, #111827 0, #020617 55%);
+      --card: rgba(15, 23, 42, 0.9);
+      --accent: #6366f1;
+      --accent-soft: rgba(99, 102, 241, 0.25);
+      --text-main: #e5e7eb;
+      --text-muted: #9ca3af;
+      --danger: #f97373;
+      --success: #22c55e;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      min-height: 100vh;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: var(--bg);
+      color: var(--text-main);
+      display: flex;
+      flex-direction: column;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    .page {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 1.5rem 1.25rem 4rem;
+    }
+
+    /* NAVBAR */
+    .nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 2rem;
+      gap: 1rem;
+    }
+
+    .nav-left {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .logo-circle {
+      width: 40px;
+      height: 40px;
+      border-radius: 999px;
+      background: radial-gradient(circle at 30% 30%, #4f46e5, #0f172a);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      letter-spacing: 0.03em;
+      box-shadow: 0 0 20px rgba(129, 140, 248, 0.6);
+      font-size: 0.9rem;
+    }
+
+    .bot-name {
+      font-weight: 700;
+      font-size: 1.2rem;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+    }
+
+    .pill {
+      padding: 0.45rem 0.9rem;
+      border-radius: 999px;
+      font-size: 0.8rem;
+      border: 1px solid rgba(148, 163, 184, 0.35);
+      color: var(--text-muted);
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+    }
+
+    .pill-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 999px;
+      background: #22c55e;
+      box-shadow: 0 0 12px rgba(34, 197, 94, 0.65);
+    }
+
+    /* HERO */
+
+    .hero {
+      display: grid;
+      grid-template-columns: minmax(0, 1.1fr) minmax(0, 1.1fr);
+      gap: 2rem;
+      margin-bottom: 2.5rem;
+    }
+
+    @media (max-width: 860px) {
+      .hero {
+        grid-template-columns: minmax(0, 1fr);
+      }
+    }
+
+    .hero-text {
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+    }
+
+    .hero-title {
+      font-size: clamp(2rem, 3vw, 2.5rem);
+      line-height: 1.1;
+      font-weight: 800;
+    }
+
+    .hero-highlight {
+      background: linear-gradient(120deg, #a855f7, #6366f1, #22c55e);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+
+    .hero-sub {
+      color: var(--text-muted);
+      font-size: 0.95rem;
+      max-width: 32rem;
+    }
+
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+    }
+
+    .btn {
+      padding: 0.7rem 1.2rem;
+      font-size: 0.92rem;
+      border-radius: 999px;
+      border: none;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-weight: 600;
+      transition: transform 0.12s ease, box-shadow 0.12s ease, background-color 0.12s ease, opacity 0.12s ease;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #4f46e5, #6366f1);
+      box-shadow: 0 12px 30px rgba(99, 102, 241, 0.55);
+      color: #f9fafb;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 18px 40px rgba(99, 102, 241, 0.7);
+    }
+
+    .btn-ghost {
+      background: transparent;
+      border: 1px solid rgba(148, 163, 184, 0.5);
+      color: var(--text-muted);
+    }
+
+    .btn-ghost:hover {
+      background: rgba(15, 23, 42, 0.8);
+    }
+
+    .hero-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.6rem;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+
+    .badge-soft {
+      padding: 0.35rem 0.7rem;
+      border-radius: 999px;
+      background: rgba(15, 23, 42, 0.8);
+      border: 1px solid rgba(148, 163, 184, 0.35);
+    }
+
+    /* RIGHT SIDE: PREVIEW CARD */
+
+    .hero-right {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .card-outer {
+      border-radius: 1.2rem;
+      background: radial-gradient(circle at top left, rgba(96, 165, 250, 0.18), transparent 55%);
+      padding: 2px;
+      box-shadow: 0 18px 45px rgba(15, 23, 42, 0.95);
+    }
+
+    .card-inner {
+      border-radius: 1.1rem;
+      background: var(--card);
+      padding: 1.25rem;
+      border: 1px solid rgba(148, 163, 184, 0.25);
+      display: grid;
+      grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
+      gap: 1.1rem;
+    }
+
+    @media (max-width: 640px) {
+      .card-inner {
+        grid-template-columns: minmax(0, 1fr);
+      }
+    }
+
+    .card-column {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+
+    .section-title {
+      font-size: 0.9rem;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: var(--text-muted);
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+      margin-bottom: 0.5rem;
+    }
+
+    label {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+
+    input[type="text"],
+    textarea {
+      background: rgba(15, 23, 42, 0.7);
+      border-radius: 0.6rem;
+      border: 1px solid rgba(148, 163, 184, 0.45);
+      padding: 0.45rem 0.6rem;
+      color: var(--text-main);
+      font-size: 0.8rem;
+      outline: none;
+      transition: border-color 0.15s ease, box-shadow 0.15s ease, background-color 0.15s ease;
+    }
+
+    input[type="text"]:focus,
+    textarea:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 1px var(--accent-soft);
+      background: rgba(15, 23, 42, 0.9);
+    }
+
+    textarea {
+      min-height: 70px;
+      resize: vertical;
+    }
+
+    input[type="color"] {
+      width: 46px;
+      height: 32px;
+      border-radius: 0.6rem;
+      border: 1px solid rgba(148, 163, 184, 0.45);
+      background: transparent;
+      padding: 0;
+      cursor: pointer;
+    }
+
+    .inline-row {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .inline-row input[type="text"] {
+      flex: 1;
+    }
+
+    .hint {
+      font-size: 0.7rem;
+      color: var(--text-muted);
+    }
+
+    /* EMBED PREVIEW */
+
+    .discord-embed {
+      border-radius: 0.8rem;
+      background: rgba(15, 23, 42, 0.95);
+      border-left: 4px solid var(--accent);
+      padding: 0.75rem 0.9rem;
+      font-size: 0.8rem;
+    }
+
+    .discord-embed-header {
+      display: flex;
+      gap: 0.6rem;
+      margin-bottom: 0.6rem;
+    }
+
+    .avatar {
+      width: 32px;
+      height: 32px;
+      border-radius: 999px;
+      background: linear-gradient(135deg, #8b5cf6, #6366f1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.8rem;
+    }
+
+    .embed-meta {
+      display: flex;
+      flex-direction: column;
+      gap: 0.1rem;
+    }
+
+    .embed-author {
+      font-weight: 600;
+    }
+
+    .embed-channel {
+      color: var(--text-muted);
+      font-size: 0.7rem;
+    }
+
+    .embed-body {
+      display: flex;
+      gap: 0.75rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .embed-main {
+      flex: 1;
+    }
+
+    .embed-title {
+      font-weight: 600;
+      margin-bottom: 0.25rem;
+    }
+
+    .embed-description {
+      color: var(--text-main);
+      font-size: 0.78rem;
+      white-space: pre-wrap;
+    }
+
+    .embed-thumbnail {
+      width: 60px;
+      height: 60px;
+      border-radius: 0.4rem;
+      object-fit: cover;
+      display: none;
+    }
+
+    .embed-footer {
+      color: var(--text-muted);
+      font-size: 0.7rem;
+      margin-top: 0.25rem;
+    }
+
+    .embed-banner {
+      width: 100%;
+      max-height: 150px;
+      border-radius: 0.5rem;
+      object-fit: cover;
+      margin-top: 0.45rem;
+      display: none;
+    }
+
+    /* FEATURES / FOOTER */
+
+    .sections {
+      display: grid;
+      grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
+      gap: 1.5rem;
+    }
+
+    @media (max-width: 860px) {
+      .sections {
+        grid-template-columns: minmax(0, 1fr);
+      }
+    }
+
+    .feature-card {
+      margin-top: 1.5rem;
+      border-radius: 1rem;
+      background: rgba(15, 23, 42, 0.85);
+      border: 1px solid rgba(148, 163, 184, 0.3);
+      padding: 1.25rem;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 1rem;
+    }
+
+    .feature-item {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+
+    .feature-item strong {
+      display: block;
+      color: var(--text-main);
+      margin-bottom: 0.2rem;
+    }
+
+    footer {
+      margin-top: 2.25rem;
+      font-size: 0.74rem;
+      color: var(--text-muted);
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+<div class="page">
+  <!-- NAV -->
+  <header class="nav">
+    <div class="nav-left">
+      <div class="logo-circle">VS</div>
+      <div>
+        <div class="bot-name">VantaShield Welcomer</div>
+        <div class="hint">Custom welcomes · Security · Web dashboard</div>
+      </div>
+    </div>
+    <div class="nav-links">
+      <div class="pill">
+        <span class="pill-dot"></span>
+        <span>Bot online</span>
+      </div>
+      <a class="pill" href="#demo">Live preview</a>
+    </div>
+  </header>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-text">
+      <h1 class="hero-title">
+        Fully customisable <span class="hero-highlight">welcomes & security</span> for your Discord server.
+      </h1>
+      <p class="hero-sub">
+        VantaShield Welcomer lets you design beautiful embed welcomes with GIF banners, emojis, and colours –
+        while silently blocking brand-new bots and suspicious accounts joining your server.
+      </p>
+      <div class="hero-actions">
+        <a class="btn btn-primary" href="YOUR_OAUTH_INVITE_LINK_HERE" target="_blank" rel="noopener">
+          <span>? Invite to Discord</span>
+        </a>
+        <a class="btn btn-ghost" href="#demo">
+          <span>?? Try embed preview</span>
+        </a>
+      </div>
+      <div class="hero-meta">
+        <span class="badge-soft">Custom embeds</span>
+        <span class="badge-soft">Bot & raid protection</span>
+        <span class="badge-soft">Web dashboard ready</span>
+      </div>
+    </div>
+
+    <!-- RIGHT SIDE: INTERACTIVE PREVIEW -->
+    <div class="hero-right" id="demo">
+      <div class="card-outer">
+        <div class="card-inner">
+          <!-- LEFT: form -->
+          <div class="card-column">
+            <div class="section-title">Design your welcome</div>
+
+            <div class="form-group">
+              <label for="title">Embed title</label>
+              <input id="title" type="text" placeholder="Welcome {user}!" />
+            </div>
+
+            <div class="form-group">
+              <label for="description">Description</label>
+              <textarea id="description" placeholder="Welcome to {server}, you are member #{membercount} ??"></textarea>
+              <div class="hint">
+                Variables: <code>{user}</code> <code>{username}</code> <code>{server}</code> <code>{membercount}</code>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="footer">Footer text</label>
+              <input id="footer" type="text" placeholder="Make yourself at home ??" />
+            </div>
+
+            <div class="form-group">
+              <label>Colour & images</label>
+              <div class="inline-row">
+                <input id="color-hex" type="text" value="5865f2" />
+                <input id="color-picker" type="color" value="#5865f2" />
+              </div>
+              <div class="form-group" style="margin-top:0.35rem;">
+                <input id="thumb-url" type="text" placeholder="Thumbnail URL (optional)" />
+                <input id="banner-url" type="text" placeholder="Banner / GIF URL (optional)" />
+              </div>
+              <div class="hint">
+                Paste any image / GIF link (e.g. from Imgur, Tenor). This is just a visual preview – your real dashboard will save it.
+              </div>
+            </div>
+          </div>
+
+          <!-- RIGHT: embed preview -->
+          <div class="card-column">
+            <div class="section-title">Preview</div>
+            <div class="discord-embed" id="embed-box">
+              <div class="discord-embed-header">
+                <div class="avatar">VS</div>
+                <div class="embed-meta">
+                  <div class="embed-author">VantaShield Welcomer</div>
+                  <div class="embed-channel">#welcome · Today at 12:34</div>
+                </div>
+              </div>
+              <div class="embed-body">
+                <div class="embed-main">
+                  <div class="embed-title" id="preview-title">Welcome {user}!</div>
+                  <div class="embed-description" id="preview-description">
+                    Welcome to {server}, you are member #{membercount} ??
+                  </div>
+                  <div class="embed-footer" id="preview-footer">
+                    Make yourself at home ??
+                  </div>
+                </div>
+                <img id="preview-thumb" class="embed-thumbnail" alt="Thumbnail preview" />
+              </div>
+              <img id="preview-banner" class="embed-banner" alt="Banner / GIF preview" />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-item">
+          <strong>Security-first welcomes</strong>
+          Silent checks for account age and bot status, with auto-kick options for brand-new / suspicious joins.
+        </div>
+        <div class="feature-item">
+          <strong>Per-server profiles</strong>
+          Each server can have its own welcome style, colours, emojis, banners and log channels.
+        </div>
+        <div class="feature-item">
+          <strong>Web dashboard ready</strong>
+          Connect this frontend to your backend API / Flask app to save settings directly to your bot.
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    VantaShield Welcomer · Made for Discord servers that want pretty welcomes <em>and</em> solid security.
+  </footer>
+</div>
+
+<script>
+  const titleInput = document.getElementById("title");
+  const descInput = document.getElementById("description");
+  const footerInput = document.getElementById("footer");
+  const colorHexInput = document.getElementById("color-hex");
+  const colorPicker = document.getElementById("color-picker");
+  const thumbInput = document.getElementById("thumb-url");
+  const bannerInput = document.getElementById("banner-url");
+
+  const previewTitle = document.getElementById("preview-title");
+  const previewDesc = document.getElementById("preview-description");
+  const previewFooter = document.getElementById("preview-footer");
+  const previewThumb = document.getElementById("preview-thumb");
+  const previewBanner = document.getElementById("preview-banner");
+  const embedBox = document.getElementById("embed-box");
+
+  // Set defaults
+  titleInput.value = "Welcome {user}!";
+  descInput.value = "Welcome to {server}, you are member #{membercount} ??";
+  footerInput.value = "Make yourself at home ??";
+
+  function safeHex(v) {
+    return v.replace(/[^0-9a-fA-F]/g, "").slice(0, 6) || "5865f2";
+  }
+
+  function syncFromInputs() {
+    previewTitle.textContent = titleInput.value || "Welcome {user}!";
+    previewDesc.textContent = descInput.value || "Welcome to {server}, you are member #{membercount} ??";
+    previewFooter.textContent = footerInput.value || "";
+
+    const hex = safeHex(colorHexInput.value);
+    colorHexInput.value = hex;
+    colorPicker.value = "#" + hex;
+    embedBox.style.borderLeftColor = "#" + hex;
+
+    const t = thumbInput.value.trim();
+    if (t) {
+      previewThumb.src = t;
+      previewThumb.style.display = "block";
+    } else {
+      previewThumb.style.display = "none";
+    }
+
+    const b = bannerInput.value.trim();
+    if (b) {
+      previewBanner.src = b;
+      previewBanner.style.display = "block";
+    } else {
+      previewBanner.style.display = "none";
+    }
+  }
+
+  titleInput.addEventListener("input", syncFromInputs);
+  descInput.addEventListener("input", syncFromInputs);
+  footerInput.addEventListener("input", syncFromInputs);
+  thumbInput.addEventListener("input", syncFromInputs);
+  bannerInput.addEventListener("input", syncFromInputs);
+
+  colorHexInput.addEventListener("input", () => {
+    const hex = safeHex(colorHexInput.value);
+    colorPicker.value = "#" + hex;
+    embedBox.style.borderLeftColor = "#" + hex;
+  });
+
+  colorPicker.addEventListener("input", () => {
+    const hex = colorPicker.value.replace("#", "");
+    colorHexInput.value = hex;
+    embedBox.style.borderLeftColor = "#" + hex;
+  });
+
+  syncFromInputs();
+</script>
+</body>
+</html>
